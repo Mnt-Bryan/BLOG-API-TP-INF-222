@@ -29,6 +29,6 @@ Il a été réalisé dans le cadre du TAF 1 du cours INF222 (Développement Back
 ##  Installation
 
 ```bash
-git clone https://github.com/TON_USERNAME/blog-api-cleeroute.git
+git clone https://github.com/Mnt-Bryan/BLOG-API-TP-INF-222.git
 cd blog-api-cleeroute
 npm install
