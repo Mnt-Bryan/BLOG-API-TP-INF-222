@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Blog API UI</title>
+
+<style>
+body {
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    margin: 0;
+    color: white;
+}
+
+.container {
+    max-width: 900px;
+    margin: auto;
+    padding: 20px;
+}
+
+h1 {
+    text-align: center;
+    animation: fadeIn 1s ease;
+}
+
+.card {
+    background: white;
+    color: black;
+    padding: 15px;
+    border-radius: 12px;
+    margin-bottom: 15px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    transform: translateY(20px);
+    opacity: 0;
+    animation: slideUp 0.5s forwards;
+}
+
+input, textarea {
+    width: 100%;
+    padding: 10px;
+    margin: 5px 0;
+    border-radius: 8px;
+    border: none;
+}
+
+button {
+    padding: 10px;
+    border: none;
+    border-radius: 8px;
+    background: #667eea;
+    color: white;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+button:hover {
+    background: #5a67d8;
+    transform: scale(1.05);
+}
+
+.delete {
+    background: red;
+}
+
+.delete:hover {
+    background: darkred;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideUp {
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h1> Blog API Dashboard</h1>
+
+<div class="card">
+    <h2>Ajouter un article</h2>
+
+    <input id="titre" placeholder="Titre">
+    <input id="auteur" placeholder="Auteur">
+    <input id="categorie" placeholder="Catégorie">
+    <input id="tags" placeholder="Tags">
+    <textarea id="contenu" placeholder="Contenu"></textarea>
+
+    <button onclick="addArticle()">Ajouter</button>
+</div>
+
+<div class="card">
+    <h2> Recherche</h2>
+    <input id="search" placeholder="Rechercher..." onkeyup="searchArticles()">
+</div>
+
+<div id="articles"></div>
+
+</div>
+
+<script>
+async function addArticle() {
+    await fetch('/api/articles', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            titre: titre.value,
+            contenu: contenu.value,
+            auteur: auteur.value,
+            categorie: categorie.value,
+            tags: tags.value,
+            date: new Date().toISOString()
+        })
+    });
+
+    clearForm();
+    loadArticles();
+}
+
+function clearForm() {
+    titre.value = "";
+    contenu.value = "";
+    auteur.value = "";
+    categorie.value = "";
+    tags.value = "";
+}
+
+async function loadArticles() {
+    const res = await fetch('/api/articles');
+    const data = await res.json();
+
+    displayArticles(data);
+}
+
+function displayArticles(data) {
+    articles.innerHTML = data.map((a, i) => `
+        <div class="card" style="animation-delay:${i * 0.1}s">
+            <h3>${a.titre}</h3>
+            <p>${a.contenu}</p>
+            <small>✍️ ${a.auteur} | 📂 ${a.categorie}</small><br><br>
+
+            <button onclick="deleteArticle(${a.id})" class="delete">Supprimer</button>
+        </div>
+    `).join('');
+}
+
+async function deleteArticle(id) {
+    await fetch('/api/articles/' + id, {
+        method: 'DELETE'
+    });
+
+    loadArticles();
+}
+
+async function searchArticles() {
+    const query = document.getElementById("search").value;
+
+    if (!query) {
+        loadArticles();
+        return;
+    }
+
+    const res = await fetch('/api/articles/search?query=' + query);
+    const data = await res.json();
+
+    displayArticles(data);
+}
+
+loadArticles();
+</script>
+
+</body>
+</html>
