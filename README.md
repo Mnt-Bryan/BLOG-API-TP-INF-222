@@ -14,7 +14,7 @@ Il a été réalisé dans le cadre du TAF 1 du cours INF222 (Développement Back
 - Express.js
 - SQLite
 - Swagger UI
-- HTML / CSS / JavaScript
+- HTML
 
 ---
 
@@ -30,5 +30,5 @@ Il a été réalisé dans le cadre du TAF 1 du cours INF222 (Développement Back
 
 ```bash
 git clone https://github.com/Mnt-Bryan/BLOG-API-TP-INF-222.git
-cd blog-api-cleeroute
+cd blog-api
 npm install
